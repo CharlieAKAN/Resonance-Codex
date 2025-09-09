@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Resonance Codex</title>
+  <meta name="description" content="The Resonance Codex — a living guide to keep the Wizarding World consistent." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Open Sans everywhere (title + body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#090b1a; --bg2:#141a2e; --ink:#e7ebff;
+      --glow:#7bdfff; --accent:#7a5cff; --accent2:#ff7ad9;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--ink);
+      font-family:"Open Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, #1c2242 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Star sprinkles (static for perf) */
+    .stars{position:absolute; inset:0; pointer-events:none; z-index:0;}
+    .stars:before,.stars:after{
+      content:""; position:absolute; inset:0; background-repeat:repeat;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.3) 99%, transparent 100%),
+        radial-gradient(1px 1px at 70% 20%, rgba(123,223,255,.25) 99%, transparent 100%),
+        radial-gradient(1px 1px at 60% 70%, rgba(255,122,217,.22) 99%, transparent 100%),
+        radial-gradient(1px 1px at 30% 80%, rgba(122,92,255,.22) 99%, transparent 100%);
+      background-size: 600px 400px;
+      opacity:.8;
+    }
+    .stars:after{opacity:.5; transform:scale(1.2);}
+
+    /* Resonance waves (5 layers) */
+    .wave-wrap{
+      position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; opacity:.58;
+    }
+    svg.wave{position:absolute; left:50%; top:55%; transform:translate(-50%,-50%); width:1600px; height:auto; will-change:transform;}
+    @keyframes floatyA {0%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(10px)} 100%{transform:translate(-50%,-50%) translateY(0)}}
+    @keyframes floatyB {0%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(14px)} 100%{transform:translate(-50%,-50%) translateY(0)}}
+    @keyframes floatyC {0%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(6px)} 100%{transform:translate(-50%,-50%) translateY(0)}}
+    .wave.a{animation: floatyA 7s ease-in-out infinite}
+    .wave.b{animation: floatyB 9s ease-in-out infinite}
+    .wave.c{animation: floatyC 6s ease-in-out infinite; transform-origin:center}
+    .wave.d{animation: floatyA 8.5s ease-in-out infinite}
+    .wave.e{animation: floatyC 5.5s ease-in-out infinite}
+
+    .container{
+      position:relative; z-index:2; min-height:100dvh;
+      display:grid; place-items:center; padding:4rem 1.25rem;
+    }
+    .card{
+      max-width:900px; width:100%;
+      background: rgba(12,16,34,.6);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px; padding:1.75rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      text-align:center;
+    }
+
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:.5rem;
+      padding:.35rem .75rem; border-radius:999px;
+      background: linear-gradient(90deg,rgba(122,92,255,.22),rgba(123,223,255,.22));
+      border:1px solid rgba(255,255,255,.12);
+      font-size:.8rem; letter-spacing:.08em; text-transform:uppercase;
+    }
+    h1{
+      font-weight:800; line-height:1.05;
+      margin:1rem 0 .6rem; font-size:clamp(2.2rem, 3.2vw + 1rem, 3.6rem);
+      background: linear-gradient(90deg, var(--ink), #b7c7ff 35%, #a4f3ff 60%, #d9b6ff 85%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow: 0 0 18px rgba(123,223,255,.16);
+      letter-spacing:.01em;
+    }
+    .lead{
+      font-size:clamp(1rem,.8vw + .85rem,1.15rem);
+      color:#d6dcff; max-width:70ch; line-height:1.6; margin:0 auto 1rem;
+    }
+
+    /* BIG centered CTA with white text */
+    .cta{
+      display:block; text-align:center;
+      padding: 1.25rem 1.5rem; border-radius:18px; font-weight:800; font-size:1.12rem;
+      border:1px solid rgba(255,255,255,.38);
+      background:
+        radial-gradient(80% 220% at 50% -120%, rgba(255,255,255,.18), transparent 60%),
+        linear-gradient(90deg, rgba(122,92,255,.6), rgba(255,122,217,.6), rgba(123,223,255,.6));
+      color:#ffffff; text-decoration:none; position:relative; overflow:hidden;
+      box-shadow: 0 10px 40px rgba(123,223,255,.28);
+      margin:1.2rem auto 0; min-width:min(500px,100%);
+    }
+    .cta:hover{ transform: translateY(-1px); box-shadow: 0 14px 44px rgba(123,223,255,.36);}
+    .cta:active{ transform: translateY(0); }
+    .cta svg{vertical-align:-3px; margin-right:.55rem; fill:#fff}
+    .cta .spark{
+      position:absolute; inset:auto; width:140%; height:200%;
+      background: radial-gradient(380px 180px at var(--x,50%) var(--y,50%), rgba(255,255,255,.26), transparent 45%);
+      mix-blend-mode: screen; opacity:0; transition:opacity .18s ease; pointer-events:none;
+    }
+    .cta:focus-visible{outline:2px solid var(--glow); outline-offset:3px; border-radius:18px}
+
+    .footnote{
+      margin-top:1.4rem; font-size:.95rem; color:#a9b6ff;
+      display:flex; gap:.75rem; align-items:center; justify-content:center; flex-wrap:wrap;
+    }
+    .brand{
+      display:inline-flex; align-items:center; gap:.6rem; opacity:.9; font-weight:700; letter-spacing:.02em;
+    }
+    .sigil{
+      width:26px; height:26px; border-radius:50%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent2), var(--glow), var(--accent));
+      box-shadow: 0 0 18px rgba(122,92,255,.35), inset 0 0 14px rgba(255,255,255,.35);
+      position:relative; isolation:isolate;
+    }
+    .sigil:after{
+      content:""; position:absolute; inset:5px;
+      border:1.5px solid rgba(255,255,255,.65); border-radius:50%;
+      box-shadow: 0 0 8px rgba(255,255,255,.3) inset;
+    }
+
+    @media (max-width:520px){
+      .cta{font-size:1.06rem; padding:1.15rem 1.3rem; border-radius:16px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <!-- Animated resonance waves (five layers in one SVG) -->
+  <div class="wave-wrap" aria-hidden="true">
+    <svg class="wave a" viewBox="0 0 1600 500" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="gradA" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"  stop-color="#7a5cff"/>
+          <stop offset="50%" stop-color="#7bdfff"/>
+          <stop offset="100%" stop-color="#ff7ad9"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Layer 1 (front) -->
+      <path d="M0,240 C200,180 400,300 600,240 C800,180 1000,300 1200,240 C1400,180 1520,270 1600,220"
+            stroke="url(#gradA)" stroke-width="5.5" fill="none" opacity=".96">
+        <animate attributeName="d" dur="7s" repeatCount="indefinite"
+          values="M0,240 C200,180 400,300 600,240 C800,180 1000,300 1200,240 C1400,180 1520,270 1600,220;
+                  M0,250 C200,200 400,290 600,250 C800,200 1000,290 1200,250 C1400,200 1520,260 1600,230;
+                  M0,240 C200,180 400,300 600,240 C800,180 1000,300 1200,240 C1400,180 1520,270 1600,220"/>
+      </path>
+
+      <!-- Layer 2 -->
+      <path d="M0,270 C200,210 400,330 600,270 C800,210 1000,330 1200,270 C1400,210 1520,320 1600,260"
+            stroke="url(#gradA)" stroke-width="4" fill="none" opacity=".78">
+        <animate attributeName="d" dur="8.2s" repeatCount="indefinite"
+          values="M0,270 C200,210 400,330 600,270 C800,210 1000,330 1200,270 C1400,210 1520,320 1600,260;
+                  M0,280 C200,230 400,320 600,280 C800,230 1000,320 1200,280 C1400,230 1520,310 1600,270;
+                  M0,270 C200,210 400,330 600,270 C800,210 1000,330 1200,270 C1400,210 1520,320 1600,260"/>
+      </path>
+
+      <!-- Layer 3 (mid) -->
+      <path d="M0,300 C200,240 400,360 600,300 C800,240 1000,360 1200,300 C1400,240 1520,350 1600,290"
+            stroke="url(#gradA)" stroke-width="3" fill="none" opacity=".62">
+        <animate attributeName="d" dur="9.6s" repeatCount="indefinite"
+          values="M0,300 C200,240 400,360 600,300 C800,240 1000,360 1200,300 C1400,240 1520,350 1600,290;
+                  M0,315 C200,265 400,345 600,315 C800,265 1000,345 1200,315 C1400,265 1520,335 1600,305;
+                  M0,300 C200,240 400,360 600,300 C800,240 1000,360 1200,300 C1400,240 1520,350 1600,290"/>
+      </path>
+
+      <!-- Layer 4 -->
+      <path d="M0,330 C200,270 400,390 600,330 C800,270 1000,390 1200,330 C1400,270 1520,380 1600,320"
+            stroke="url(#gradA)" stroke-width="2.4" fill="none" opacity=".5">
+        <animate attributeName="d" dur="10.8s" repeatCount="indefinite"
+          values="M0,330 C200,270 400,390 600,330 C800,270 1000,390 1200,330 C1400,270 1520,380 1600,320;
+                  M0,345 C200,295 400,375 600,345 C800,295 1000,375 1200,345 C1400,295 1520,365 1600,335;
+                  M0,330 C200,270 400,390 600,330 C800,270 1000,390 1200,330 C1400,270 1520,380 1600,320"/>
+      </path>
+
+      <!-- Layer 5 (back) -->
+      <path d="M0,360 C200,300 400,420 600,360 C800,300 1000,420 1200,360 C1400,300 1520,410 1600,350"
+            stroke="url(#gradA)" stroke-width="2" fill="none" opacity=".38">
+        <animate attributeName="d" dur="12.2s" repeatCount="indefinite"
+          values="M0,360 C200,300 400,420 600,360 C800,300 1000,420 1200,360 C1400,300 1520,410 1600,350;
+                  M0,375 C200,325 400,405 600,375 C800,325 1000,405 1200,375 C1400,325 1520,395 1600,365;
+                  M0,360 C200,300 400,420 600,360 C800,300 1000,420 1200,360 C1400,300 1520,410 1600,350"/>
+      </path>
+    </svg>
+  </div>
+
+  <main class="container" role="main">
+    <section class="card" aria-labelledby="codex-title">
+      <span class="eyebrow">The Guide Harry Potter Needs</span>
+      <h1 id="codex-title">The Resonance Codex</h1>
+
+      <p class="lead">
+        Harry Potter is full of wonder... and gaps. This is our simple guide to keep the world consistent:
+        where magic comes from, why Muggle-borns and Squibs happen, and why artifacts feel alive.
+      </p>
+
+      <a class="cta" href="https://docs.resonancecodex.org/" id="read-codex" aria-label="Read the Resonance Codex">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 2a1 1 0 0 1 1 1v7h7a1 1 0 0 1 0 2h-7v7a1 1 0 0 1-2 0v-7H4a1 1 0 0 1 0-2h7V3a1 1 0 0 1 1-1Z"/>
+        </svg>
+        READ THE Resonance Codex!
+        <span class="spark" aria-hidden="true"></span>
+      </a>
+
+      <div class="footnote">
+        <span class="brand"><span class="sigil" aria-hidden="true"></span> Resonance Theory</span>
+        <span aria-hidden="true">•</span>
+        <span>Help us fill the gaps—together.</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // CTA shimmer (cheap)
+    const cta = document.querySelector('.cta');
+    const spark = document.querySelector('.spark');
+    if (cta && spark){
+      cta.addEventListener('pointermove', (e) => {
+        const r = cta.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width) * 100;
+        const y = ((e.clientY - r.top) / r.height) * 100;
+        spark.style.setProperty('--x', x + '%');
+        spark.style.setProperty('--y', y + '%');
+        spark.style.opacity = .6;
+      });
+      cta.addEventListener('pointerleave', ()=> spark.style.opacity = 0);
+    }
+
+    // Respect reduced-motion
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (media.matches) {
+      document.querySelectorAll('.wave').forEach(w => w.style.animation = 'none');
+      document.querySelectorAll('animate').forEach(a => a.parentNode && a.parentNode.removeChild(a));
+    }
+  </script>
+</body>
+</html>
